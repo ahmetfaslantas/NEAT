@@ -1,0 +1,44 @@
+{
+	"name": "neatastic",
+	"version": "1.0.0",
+	"description": "Implementation of the NEAT algorithm in TypeScript/JavaScript.",
+	"author": "Ahmet Faruk Aslantas",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ExtensionShoe/NEAT.git"
+	},
+	"main": "./build/NEAT.js",
+	"dependencies": {
+		"rollup": "^2.26.11",
+		"rollup-plugin-typescript": "^1.0.1",
+		"tslib": "^2.0.1",
+		"typescript": "^3.9.7"
+	},
+	"devDependencies": {
+		"@types/jest": "^26.0.13",
+		"jest": "^26.4.2",
+		"ts-jest": "^26.3.0"
+	},
+	"scripts": {
+		"install": "tsc && rollup -c",
+		"test": "npx jest",
+		"build": "tsc && rollup -c"
+	},
+	"keywords": [
+		"neat",
+		"ai",
+		"genetic",
+		"algorithm",
+		"evolution",
+		"javascript",
+		"typescript",
+		"Machine Learning",
+		"ML",
+		"Neuro Evolution"
+	],
+	"bugs": {
+		"url": "https://github.com/ExtensionShoe/NEAT/issues"
+	},
+	"homepage": "https://github.com/ExtensionShoe/NEAT#readme"
+}
