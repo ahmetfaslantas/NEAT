@@ -45,13 +45,13 @@ class NEAT {
 		this.connectionInnovation = 0;
 
 		if (config.mutationRate) {
-			config.mutationRate.addNodeMR = (config.mutationRate.addNodeMR !== undefined) ? config.mutationRate.addNodeMR : 0.02;
-			config.mutationRate.addConnectionMR = (config.mutationRate.addConnectionMR !== undefined) ? config.mutationRate.addConnectionMR : 0.1;
-			config.mutationRate.removeNodeMR = (config.mutationRate.removeNodeMR !== undefined) ? config.mutationRate.removeNodeMR : 0.05;
-			config.mutationRate.removeConnectionMR = (config.mutationRate.removeConnectionMR !== undefined) ? config.mutationRate.removeConnectionMR : 0.1;
-			config.mutationRate.changeWeightMR = (config.mutationRate.changeWeightMR !== undefined) ? config.mutationRate.changeWeightMR : 0.1;
+			config.mutationRate.addNodeMR = (config.mutationRate.addNodeMR !== undefined) ? config.mutationRate.addNodeMR : 0.01;
+			config.mutationRate.addConnectionMR = (config.mutationRate.addConnectionMR !== undefined) ? config.mutationRate.addConnectionMR : 0.02;
+			config.mutationRate.removeNodeMR = (config.mutationRate.removeNodeMR !== undefined) ? config.mutationRate.removeNodeMR : 0.005;
+			config.mutationRate.removeConnectionMR = (config.mutationRate.removeConnectionMR !== undefined) ? config.mutationRate.removeConnectionMR : 0.005;
+			config.mutationRate.changeWeightMR = (config.mutationRate.changeWeightMR !== undefined) ? config.mutationRate.changeWeightMR : 0.01;
 		} else {
-			config.mutationRate = { addNodeMR: 0.02, addConnectionMR: 0.1, removeNodeMR: 0.05, removeConnectionMR: 0.1, changeWeightMR: 0.1 };
+			config.mutationRate = { addNodeMR: 0.01, addConnectionMR: 0.02, removeNodeMR: 0.005, removeConnectionMR: 0.005, changeWeightMR: 0.01 };
 		}
 
 		this.species.push(new Species());
@@ -77,6 +77,49 @@ class NEAT {
 		}
 
 		this.species = Species.speciate(genomes, this.config.distanceConstants);
+	}
+
+	assignPopulationLimit() {
+		let total = 0;
+		this.species.forEach(specie => {
+			total += specie.adjustFitness();
+		});
+
+		this.species.forEach(specie => {
+			let normalized = specie.adjustedFitness / total;
+			specie.populationCap = Math.floor(normalized * this.config.populationSize);
+			if (isNaN(specie.populationCap) || specie.populationCap < 0) {
+				specie.populationCap = 0;
+			}
+		});
+
+		for (let i = this.species.length - 1; i >= 0; i--) {
+			if (this.species[i].populationCap === 0 || this.species[i].genomes.length < 1) this.species.splice(i, 1);
+		}
+	}
+
+	repopulate() {
+		this.species.forEach(specie => {
+			specie.repopulate(this.config.structure);
+		});
+	}
+
+	run() {
+		while (this.config.maxEpoch--) {
+			let genomes: Genome[] = [];
+			for (let i = 0; i < this.species.length; i++) {
+				genomes = genomes.concat(this.species[i].getGenomes());
+			}
+
+			genomes.forEach(genome => {
+				genome.fitness = this.config.fitnessFunction(genome);
+			});
+
+			this.speciate();
+			this.assignPopulationLimit();
+			this.repopulate();
+			this.mutate();
+		}
 	}
 }
 

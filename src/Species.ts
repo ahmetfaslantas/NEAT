@@ -1,9 +1,10 @@
-import { Genome } from "./Genome";
+import { Genome, StructureConfig } from "./Genome";
 import { DistanceConfig, NEAT } from "./NEAT";
 
 class Species {
 	genomes: Genome[] = [];
 	populationCap: number = 0;
+	adjustedFitness: number = 0;
 
 	constructor() {
 	}
@@ -22,6 +23,25 @@ class Species {
 
 	randomGenome(): Genome {
 		return this.genomes[Math.floor(Math.random() * this.genomes.length)];
+	}
+
+	adjustFitness(): number {
+		this.adjustedFitness = 0;
+		this.genomes.forEach(genome => {
+			this.adjustedFitness += genome.fitness / this.genomes.length;
+		});
+		return this.adjustedFitness;
+	}
+
+	repopulate(config: StructureConfig) {
+		let half_length = Math.ceil(this.genomes.length / 2);
+		this.genomes = this.genomes.splice(0, half_length);
+
+		let newGenomes = [];
+		while (newGenomes.length < this.populationCap) {
+			newGenomes.push(Genome.crossover(this.randomGenome(), this.randomGenome(), config));
+		}
+		this.genomes = newGenomes;
 	}
 
 	mutateConnection(rate: number, neat: NEAT) {

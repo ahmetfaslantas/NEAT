@@ -243,7 +243,8 @@ class Genome {
 
 		let childConnection = this.hasConnection(gene.innovation);
 		if (!childConnection) {
-			this.connections.push(new Connection(iNodeConnection, oNodeConnection, gene.innovation));
+			let connection = new Connection(iNodeConnection, oNodeConnection, gene.innovation, gene.weight);
+			if (!Connection.isRecurrent(connection, this)) this.connections.push(new Connection(iNodeConnection, oNodeConnection, gene.innovation, gene.weight));
 		} else {
 			// @ts-ignore
 			childConnection.activateConnection();
