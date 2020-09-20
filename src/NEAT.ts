@@ -1,4 +1,4 @@
-import { Genome, StructureConfig, IFitnessFunction } from "./Genome";
+import { Genome, StructureConfig } from "./Genome";
 import { Connection } from "./Connection";
 import { Node, NodeType } from "./Node";
 import { Species } from "./Species";
@@ -28,6 +28,10 @@ interface DistanceConfig {
 	compatibilityThreshold: number;
 }
 
+interface IFitnessFunction {
+	(input: Genome): number;
+}
+
 class NEAT {
 	config: NEATConfig;
 	species: Species[] = [];
@@ -35,6 +39,7 @@ class NEAT {
 	connectionInnovation: number;
 	connectionDB: Connection[] = [];
 	nodeDB: Node[] = [];
+	epoch: number = 0;
 
 	constructor(config: NEATConfig) {
 
@@ -104,8 +109,10 @@ class NEAT {
 		});
 	}
 
-	run() {
-		while (this.config.maxEpoch--) {
+	run(): Genome[] | undefined {
+		let fitness = [];
+		while (this.config.maxEpoch > this.epoch) {
+			fitness = [];
 			let genomes: Genome[] = [];
 			for (let i = 0; i < this.species.length; i++) {
 				genomes = genomes.concat(this.species[i].getGenomes());
@@ -113,12 +120,17 @@ class NEAT {
 
 			genomes.forEach(genome => {
 				genome.fitness = this.config.fitnessFunction(genome);
+				fitness.push(genome);
+				if (isNaN(genome.fitness) || genome.fitness === undefined) throw new Error("Fitness function returned NaN or undefined.");
 			});
+
+			if (fitness.filter(genome => genome.fitness > this.config.fitnessThreshold).length > 0) return fitness.filter(genome => genome.fitness > this.config.fitnessThreshold);
 
 			this.speciate();
 			this.assignPopulationLimit();
 			this.repopulate();
 			this.mutate();
+			this.epoch++;
 		}
 	}
 }

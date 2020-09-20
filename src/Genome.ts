@@ -3,10 +3,6 @@ import { Connection } from "./Connection";
 import { IActivationFunction } from "./ActivationFunction";
 import { NEAT, DistanceConfig } from "./NEAT";
 
-interface IFitnessFunction {
-	(input: Genome): number;
-}
-
 interface StructureConfig {
 	in: number;
 	hidden?: number;
@@ -45,6 +41,8 @@ class Genome {
 	activate(input: number[]): number[] {
 		for (let i = 0; i < this.nodes.length; i++) {
 			this.nodes[i].inputCount = Connection.outputConnectionsOfNode(this.nodes[i], this.connections).length;
+			this.nodes[i].inputTimes = 0;
+			this.nodes[i].value = 0;
 		}
 
 		let stack = Node.getNodesByType(NodeType.INPUT, this.nodes);
@@ -299,4 +297,4 @@ class Genome {
 	}
 }
 
-export { Genome, StructureConfig, ConnectionStructure, IFitnessFunction };
+export { Genome, StructureConfig, ConnectionStructure };
