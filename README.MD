@@ -1,7 +1,5 @@
 # NEAT.js
 
-# This README is not complete as well as the library which is still in production.
-
 NeuroEvolution of Augmenting Topologies (NEAT) is a genetic algorithm (GA) for the generation of evolving artificial neural networks.
 
 This library implements this technology in TypeScript which then gets compiles into JavaScript for use in Node.js or browsers.
@@ -27,29 +25,33 @@ let NEAT = require("neatastic").NEAT;
 You can later use the constructor as such:
 ```js
 let config = {
-   populationSize:150,
-   structure:{
-      in:5,
-      hidden:0,
-      out:2
-   },
-   mutationRate:{
-      addNodeMR:0.01,
-      addConnectionMR:0.02,
-      removeNodeMR:0.01,
-      removeConnectionMR:0.015,
-      changeWeightMR:0.1
-   },
-   distanceConstants:{
-      c1:1,
-      c2:1,
-      c3:1,
-      compatibilityThreshold:.7
-   },
-    activationFunction:NEAT.ActivationFunction.RELU
+	populationSize: 1500,
+	structure: {
+		in: 2,
+		hidden: 0,
+		out: 1,
+		activationFunc: NEAT.ActivationFunction.RELU
+	},
+	mutationRate: {
+		addNodeMR: 0.005,
+		addConnectionMR: .01,
+		removeNodeMR: 0.0001,
+		removeConnectionMR: 0.01,
+		changeWeightMR: 0.1
+	},
+	distanceConstants: {
+		c1: 2,
+		c2: .5,
+		c3: 1,
+		compatibilityThreshold: 1.5
+	},
+	fitnessThreshold: 3.5,
+	fitnessFunction: func,
+	maxEpoch: 450
 }
 let NEAT = require("neatastic").NEAT;
 let neat = new NEAT(config);
+neat.run();
 ```
 
 
