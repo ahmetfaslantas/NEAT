@@ -34,6 +34,7 @@ class Species {
 	}
 
 	repopulate(config: StructureConfig) {
+		this.genomes = this.genomes.sort((a, b) => b.fitness - a.fitness)
 		let half_length = Math.ceil(this.genomes.length / 2);
 		this.genomes = this.genomes.splice(0, half_length);
 
